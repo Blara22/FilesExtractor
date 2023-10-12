@@ -2,10 +2,11 @@ if __name__ == '__main__':
     import os
     import shutil
     from zipfile import ZipFile
+    from dotenv import load_dotenv
+
+    load_dotenv()
 
     directorio = input("Ruta del archivo: ")
-
-    # directorio = r"D:\Descargas\P1IDSTM-Ejercicio 7 - Viaje de autobús-42677.zip"
 
     with ZipFile(directorio, 'r') as zipObj:
         # Extract all the contents of zip file in different directory
@@ -15,19 +16,25 @@ if __name__ == '__main__':
         zipObj.extractall(directorio)
 
     materia = input("A dónde se van a extraer: "
-                    "\n1. Programación 1 TM"
-                    "\n2. Programación 1 TV"
+                    "\n1. Programación 2 TM"
+                    "\n2. Programación 2 TV"
+                    "\n3. Estructura de Datos TM"
+                    "\n4. Estructura de Datos TV"
                     "\nOpción: ")
 
     if materia == "1":
-        carpeta = "Programación 1\\TM"
+        carpeta = "Programación 2\\TM"
     elif materia == "2":
-        carpeta = "Programación 1\\TV"
+        carpeta = "Programación 2\\TV"
+    elif materia == "3":
+        carpeta = "Estructura de Datos\\TM"
+    elif materia == "4":
+        carpeta = "Estructura de Datos\\TV"
 
     print("Extrayendo...")
 
     subdirectorios = [f.path for f in os.scandir(directorio) if f.is_dir()]
-    nuevoDirectorio = os.path.join("D:\\Escritorio\\2023-I\\", carpeta)
+    nuevoDirectorio = os.path.join(os.getenv('MAIN_FILE_DIRECTORY'), carpeta)
     nombreDelDirectorioOriginal = os.path.split(directorio)[1]
 
     if not os.path.exists(os.path.join(nuevoDirectorio, nombreDelDirectorioOriginal)):
@@ -37,14 +44,17 @@ if __name__ == '__main__':
         index = 0
         for file in os.listdir(subdirectorio):
             print("Copiando " + os.path.split(subdirectorio)[1] + "...")
-            nombreArchivoNuevo = os.path.basename(subdirectorio).split("_")[0]
+            nombreArchivoNuevo = os.path.basename(subdirectorio).split("_")[0] + " " + os.path.splitext(file)[0]
+            extension = os.path.splitext(file)[1]
 
-            if os.path.isfile(os.path.join(nuevoDirectorio+"\\"+nombreDelDirectorioOriginal, nombreArchivoNuevo+".cpp")):
+            if os.path.isfile(os.path.join(nuevoDirectorio+"\\"+nombreDelDirectorioOriginal, nombreArchivoNuevo+extension)):
                 nombreArchivoNuevo = nombreArchivoNuevo + "(" + str(index) + ")"
 
-            nombreArchivoNuevo = nombreArchivoNuevo + ".cpp"
+            nombreArchivoNuevo = nombreArchivoNuevo + extension
             newFolder = os.path.join(nuevoDirectorio+"\\"+nombreDelDirectorioOriginal, nombreArchivoNuevo)
-            shutil.copy(os.path.join(directorio, subdirectorio, file), newFolder)
-            index = index + 1
+            shutil.move(os.path.join(directorio, subdirectorio, file), newFolder)
+            #index = index + 1
+
+    shutil.rmtree(directorio)
 
     print("La copia ha terminado :)")

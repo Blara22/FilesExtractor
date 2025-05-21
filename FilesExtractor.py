@@ -23,11 +23,14 @@ if __name__ == '__main__':
                     "\nOpción: ")
 
     if materia == "1":
-        carpeta = "Programación 1\\TM"
+        carpeta = "Programación 1 IDS TM"
+        tipo = "cpp"
     elif materia == "2":
-        carpeta = "Programación 1\\TV"
+        carpeta = "Programación 1 IDS TV"
+        tipo = "cpp"
     elif materia == "3":
-        carpeta = "Programación 3"
+        tipo = "java"
+        carpeta = "Programación 3 IDS TM"
 
     print("Extrayendo...")
 
@@ -58,17 +61,18 @@ if __name__ == '__main__':
             shutil.move(os.path.join(directorio, subdirectorio, file), newFolder)
             #index = index + 1
 
-
             #Si lo que se copió es un archivo zip, se extrae en el directorio que le corresponde.
             if file.endswith('.zip'):
                 with ZipFile(newFolder, 'r') as zipObj:
                     # Extract all the contents of zip file in different directory
                     dirSegundoZip = os.path.join(os.path.dirname(newFolder), os.path.splitext(os.path.basename(newFolder))[0])
-                    print(dirSegundoZip)
                     if not os.path.exists(dirSegundoZip):
                         os.makedirs(dirSegundoZip)
                     zipObj.extractall(dirSegundoZip)
                 os.remove(newFolder)
+
+    if(tipo == "cpp"):
+        shutil.copytree(".vscode", nuevoDirectorio+"\\"+nombreDelDirectorioOriginal+"\\.vscode\\")
 
     shutil.rmtree(directorio)
 
